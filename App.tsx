@@ -1,14 +1,14 @@
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar } from 'expo-status-bar'
 
-import { SignIn } from './src/screens/SignIn';
+import { SignIn } from './src/screens/SignIn'
+import { ThemeProvider } from 'styled-components/native'
+import theme from './src/theme'
 
 export default function App() {
   return (
-    <>
-    <StatusBar/>
-    <SignIn/>
-    </>
-  );
+    <ThemeProvider theme={theme}>
+      <StatusBar />
+      <SignIn />
+    </ThemeProvider>
+  )
 }
-
-
