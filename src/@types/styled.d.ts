@@ -1,5 +1,5 @@
 import 'styled-components/native'
-import theme from '../theme'
+import { theme } from '../theme'
 
 type ThemeType = typeof theme
 
