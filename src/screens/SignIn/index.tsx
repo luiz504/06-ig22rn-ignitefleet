@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { GoogleSignin } from '@react-native-google-signin/google-signin'
 
 import { IOS_CLIENT_ID, WEB_CLIENT_ID } from '@env'
@@ -10,6 +10,7 @@ import { Button } from '~/components/Button'
 import { Container, Title, Slogan } from './styles'
 import { useMutation } from '@tanstack/react-query'
 import { Alert } from 'react-native'
+import { useApp, Realm } from '@realm/react'
 
 GoogleSignin.configure({
   scopes: ['email', 'profile'],
@@ -17,14 +18,17 @@ GoogleSignin.configure({
   iosClientId: IOS_CLIENT_ID,
 })
 export const SignIn: FC = () => {
+  const app = useApp()
   const { mutateAsync: handleGoogleSignIn, isPending } = useMutation({
     mutationFn: async () => {
       try {
         const { idToken } = await GoogleSignin.signIn()
-        if (idToken) {
-          return idToken
+        if (!idToken) {
+          throw new Error('Failed to login with Google account')
         }
-        throw new Error('Failed to login with Google account')
+
+        const credentials = Realm.Credentials.jwt(idToken)
+        await app.logIn(credentials)
       } catch (err) {
         Alert.alert(
           'Login',
