@@ -13,16 +13,22 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.luiz504.ignitefleet"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#202024"
-      }
+      },
+      "package": "com.luiz504.ignitefleet"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": ["expo-font"],
+    "experiments": {
+      "tsconfigPaths": true
     }
   }
 }
