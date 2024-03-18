@@ -20,7 +20,7 @@ import { SignIn } from '~/screens/SignIn'
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold })
-  console.log('dd', fontsLoaded)
+
   return (
     <AppProvider id={REACT_APP_ID}>
       <QueryClientProvider client={queryClient}>
