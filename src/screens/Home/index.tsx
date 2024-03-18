@@ -1,12 +1,12 @@
 import { FC } from 'react'
-import { Text, View } from 'react-native'
 
-// import styles from './styles'
+import { Container } from './styles'
+import { Header } from './components/Header'
 
 export const Home: FC = () => {
   return (
-    <View>
-      <Text style={{ color: 'red' }}> Home </Text>
-    </View>
+    <Container>
+      <Header />
+    </Container>
   )
 }
