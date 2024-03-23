@@ -18,6 +18,7 @@ import { Loading } from '~/components/Loading'
 import { SignIn } from '~/screens/SignIn'
 
 import { Routes } from '~/routes'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold })
@@ -26,18 +27,20 @@ export default function App() {
     <AppProvider id={REALM_APP_ID}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={theme}>
-          <StatusBar
-            barStyle={'light-content'}
-            backgroundColor={'transparent'}
-            translucent
-          />
+          <SafeAreaProvider>
+            <StatusBar
+              barStyle={'light-content'}
+              backgroundColor={'transparent'}
+              translucent
+            />
 
-          {!fontsLoaded && <Loading />}
-          {fontsLoaded && (
-            <UserProvider fallback={<SignIn />}>
-              <Routes />
-            </UserProvider>
-          )}
+            {!fontsLoaded && <Loading />}
+            {fontsLoaded && (
+              <UserProvider fallback={<SignIn />}>
+                <Routes />
+              </UserProvider>
+            )}
+          </SafeAreaProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </AppProvider>
