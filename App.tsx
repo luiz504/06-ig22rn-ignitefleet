@@ -7,16 +7,17 @@ import {
 } from '@expo-google-fonts/roboto'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { AppProvider, UserProvider } from '@realm/react'
+import { REALM_APP_ID } from '@env'
 
 import { theme } from '~/theme'
 
 import { queryClient } from '~/services/queryClient'
-import { REALM_APP_ID } from '@env'
 
 import { Loading } from '~/components/Loading'
 
-import { Home } from '~/screens/Home'
 import { SignIn } from '~/screens/SignIn'
+
+import { Routes } from '~/routes'
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold })
@@ -34,7 +35,7 @@ export default function App() {
           {!fontsLoaded && <Loading />}
           {fontsLoaded && (
             <UserProvider fallback={<SignIn />}>
-              <Home />
+              <Routes />
             </UserProvider>
           )}
         </ThemeProvider>
