@@ -1,15 +1,14 @@
 import React, { FC } from 'react'
 import { TouchableOpacity } from 'react-native'
 import { Power } from 'phosphor-react-native'
+import { useUser, useApp } from '@realm/react'
 
 import { Container, Greeting, Message, Name, Picture } from './styles'
 
 import { theme } from '~/theme'
-import { useUser, useApp } from '@realm/react'
 
-type Profile = { email: string; name: string; pictureUrl: string }
 export const Header: FC = () => {
-  const profile = useUser()?.profile as Profile | undefined
+  const profile = useUser().profile
 
   const app = useApp()
 

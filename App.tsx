@@ -11,7 +11,7 @@ import { AppProvider, UserProvider } from '@realm/react'
 import { theme } from '~/theme'
 
 import { queryClient } from '~/services/queryClient'
-import { REACT_APP_ID } from '@env'
+import { REALM_APP_ID } from '@env'
 
 import { Loading } from '~/components/Loading'
 
@@ -22,7 +22,7 @@ export default function App() {
   const [fontsLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold })
 
   return (
-    <AppProvider id={REACT_APP_ID}>
+    <AppProvider id={REALM_APP_ID}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={theme}>
           <StatusBar
@@ -30,6 +30,7 @@ export default function App() {
             backgroundColor={'transparent'}
             translucent
           />
+
           {!fontsLoaded && <Loading />}
           {fontsLoaded && (
             <UserProvider fallback={<SignIn />}>
