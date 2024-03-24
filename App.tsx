@@ -1,3 +1,4 @@
+import 'react-native-get-random-values'
 import { useCallback, useEffect } from 'react'
 import { StatusBar } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -13,7 +14,7 @@ import { AppProvider, RealmProvider, UserProvider } from '@realm/react'
 import { REALM_APP_ID } from '@env'
 
 import { theme } from '~/theme'
-import { queryClient } from '~/services/queryClient'
+import { queryClient } from '~/libs/react-query/queryClient'
 
 import { Loading } from '~/components/Loading'
 

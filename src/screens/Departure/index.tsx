@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
+import { Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -12,6 +12,9 @@ import { FormFieldColumn, TextError } from '~/components/form'
 
 import { Container, Body } from './styles'
 import { licensePlateSchema } from '~/utils/validations/licensePlateValidation'
+import { useRealm, useUser } from '@realm/react'
+import { Historic } from '~/libs/realm/schemas/Historic'
+import { AppScreenProps } from '~/routes/app.routes'
 
 const KeyboardAvoidingViewBehavior =
   Platform.OS === 'android' ? 'height' : 'position'
@@ -19,27 +22,51 @@ const KeyboardAvoidingViewBehavior =
 const departureFormSchema = z.object({
   licensePlate: licensePlateSchema,
   purpose: z
-    .string({ required_error: 'Inform the purpose of vehicle usage' })
-    .min(1, { message: 'Inform the purpose of vehicle usage.' }),
+    .string({ required_error: 'Specify the purpose of vehicle use.' })
+    .min(1, { message: 'Specify the purpose of vehicle use.' }),
 })
 type DepartureFormData = z.infer<typeof departureFormSchema>
-export const DepartureScreen: FC = () => {
+
+type Props = AppScreenProps<'departure'>
+export const DepartureScreen: FC<Props> = ({ navigation }) => {
   const {
     control,
     setFocus,
-    trigger,
-    formState: { errors },
+    handleSubmit,
+    formState: { errors, isSubmitting },
   } = useForm<DepartureFormData>({
+    mode: 'onChange',
     resolver: zodResolver(departureFormSchema),
+    defaultValues: {
+      licensePlate: 'ABD1234',
+      purpose: 'Some Purpose',
+    },
   })
+  const realm = useRealm()
+  const user = useUser()
 
-  const handleDepartureRegister = async () => {
-    const isValid = await trigger(['licensePlate', 'purpose'], {
-      shouldFocus: true,
-    })
+  const handleDepartureRegister = handleSubmit(
+    async (data: DepartureFormData) => {
+      try {
+        realm.write(() => {
+          realm.create(
+            'Historic',
+            Historic.generate({
+              user_id: user!.id,
+              license_plate: data.licensePlate,
+              description: data.purpose,
+            }),
+          )
+        })
 
-    console.log('OK', isValid) //eslint-disable-line
-  }
+        Alert.alert('Success', 'Departure registered successfully')
+
+        navigation.goBack()
+      } catch (err) {
+        Alert.alert('Error', 'Failed to register departure.')
+      }
+    },
+  )
   return (
     <Container>
       <Header title="Departure" />
@@ -64,7 +91,7 @@ export const DepartureScreen: FC = () => {
                     onChangeText={(value) =>
                       onChange(value.toLocaleUpperCase().trim())
                     }
-                    editable={!disabled}
+                    editable={!disabled && !isSubmitting}
                   />
                 )}
               />
@@ -83,7 +110,7 @@ export const DepartureScreen: FC = () => {
                     ref={ref}
                     value={value}
                     onChangeText={(value) => onChange(value.trim())}
-                    editable={!disabled}
+                    editable={!disabled && !isSubmitting}
                   />
                 )}
               />
@@ -93,6 +120,7 @@ export const DepartureScreen: FC = () => {
             <Button
               label="Register Departure"
               onPress={handleDepartureRegister}
+              isLoading={isSubmitting}
             />
           </Body>
         </ScrollView>
