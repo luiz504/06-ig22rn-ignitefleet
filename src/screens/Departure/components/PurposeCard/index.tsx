@@ -1,24 +1,30 @@
-import React, { FC } from 'react'
-
-import { Container, Input, Label } from './styles'
-import { TextInputProps } from 'react-native'
+import { forwardRef } from 'react'
+import { TextInput, TextInputProps } from 'react-native'
 import { useTheme } from 'styled-components'
+
+import { Container, Label, styles } from './styles'
 
 type Props = TextInputProps & {
   label: string
 }
-export const PurposeCard: FC<Props> = ({ label, ...rest }) => {
-  const theme = useTheme()
-  return (
-    <Container>
-      <Label>{label}</Label>
-      <Input
-        {...rest}
-        placeholderTextColor={theme.COLORS.GRAY_400}
-        multiline
-        autoCapitalize="sentences"
-        style={{ textAlignVertical: 'top', ...(rest.style as object) }}
-      />
-    </Container>
-  )
-}
+export const PurposeCard = forwardRef<TextInput, Props>(
+  ({ label, ...rest }, ref) => {
+    const theme = useTheme()
+
+    return (
+      <Container>
+        <Label>{label}</Label>
+        <TextInput
+          {...rest}
+          ref={ref}
+          placeholderTextColor={theme.COLORS.GRAY_400}
+          multiline
+          autoCapitalize="sentences"
+          style={[styles.input, rest.style]}
+        />
+      </Container>
+    )
+  },
+)
+
+PurposeCard.displayName = 'PurposeCard'

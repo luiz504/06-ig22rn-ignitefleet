@@ -1,4 +1,6 @@
+import { StyleSheet } from 'react-native'
 import styled from 'styled-components/native'
+import { theme } from '~/theme'
 
 export const Container = styled.View`
   width: 100%;
@@ -12,11 +14,13 @@ export const Label = styled.Text`
   font-size: ${({ theme }) => theme.FONT_SIZE.SM}px;
   font-family: ${({ theme }) => theme.FONT_FAMILY.REGULAR};
 `
-export const Input = styled.TextInput`
-  color: ${({ theme }) => theme.COLORS.GRAY_200};
-  font-size: ${({ theme }) => theme.FONT_SIZE.XXL}px;
-  font-family: ${({ theme }) => theme.FONT_FAMILY.BOLD};
+export const styles = StyleSheet.create({
+  input: {
+    color: theme.COLORS.GRAY_200,
+    fontSize: theme.FONT_SIZE.XXL,
+    fontFamily: theme.FONT_FAMILY.BOLD,
 
-  text-align: center;
-  margin-top: 16px;
-`
+    textAlign: 'center',
+    marginTop: 16,
+  },
+})

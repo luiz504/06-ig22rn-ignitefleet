@@ -1,4 +1,6 @@
+import { StyleSheet } from 'react-native'
 import styled from 'styled-components/native'
+import { theme } from '~/theme'
 
 export const Container = styled.View`
   width: 100%;
@@ -23,3 +25,15 @@ export const Input = styled.TextInput`
   margin-top: 16px;
   flex: 1;
 `
+export const styles = StyleSheet.create({
+  input: {
+    color: theme.COLORS.GRAY_200,
+    fontSize: theme.FONT_SIZE.MD,
+    fontFamily: theme.FONT_FAMILY.REGULAR,
+
+    marginTop: 16,
+    verticalAlign: 'top',
+    flex: 1,
+    textAlignVertical: 'top',
+  },
+})
