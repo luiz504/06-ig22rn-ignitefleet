@@ -4,14 +4,20 @@ import { Header } from './components/Header'
 import { CarStatus } from './components/CarStatus'
 
 import { Container, Body } from './styles'
-export const Home: FC = () => {
+
+import { AppScreenProps } from '~/routes/app.routes'
+
+type Props = AppScreenProps<'home'>
+export const HomeScreen: FC<Props> = ({ navigation }) => {
+  const handleRegisterMovement = () => {
+    navigation.navigate('departure')
+  }
   return (
     <Container>
       <Header />
 
       <Body>
-        <CarStatus />
-        <CarStatus licensePlate={'ABC-1234'} />
+        <CarStatus onPress={handleRegisterMovement} />
       </Body>
     </Container>
   )
