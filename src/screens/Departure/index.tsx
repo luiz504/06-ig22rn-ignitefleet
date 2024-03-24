@@ -1,12 +1,12 @@
-import { FC } from 'react'
+import React, { FC } from 'react'
 
 import { Container } from './styles'
-import { Text } from 'react-native'
+import { Header } from '~/components/Header'
 
 export const DepartureScreen: FC = () => {
   return (
     <Container>
-      <Text>Departure</Text>
+      <Header title="Departure" />
     </Container>
   )
 }
