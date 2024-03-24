@@ -17,7 +17,7 @@ import { theme } from '~/theme'
 import { queryClient } from '~/libs/react-query/queryClient'
 import { RealmProvider } from '~/libs/realm'
 
-import { SignIn } from '~/screens/SignIn'
+import { SignIn } from '~/screens/auth/SignIn'
 
 import { Routes } from '~/routes'
 
