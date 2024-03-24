@@ -1,16 +1,18 @@
-import { ThemeProvider } from 'styled-components/native'
+import { useCallback, useEffect } from 'react'
 import { StatusBar } from 'react-native'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { ThemeProvider } from 'styled-components/native'
 import {
   useFonts,
   Roboto_400Regular,
   Roboto_700Bold,
 } from '@expo-google-fonts/roboto'
+import * as SplashScreen from 'expo-splash-screen'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { AppProvider, UserProvider } from '@realm/react'
+import { AppProvider, RealmProvider, UserProvider } from '@realm/react'
 import { REALM_APP_ID } from '@env'
 
 import { theme } from '~/theme'
-
 import { queryClient } from '~/services/queryClient'
 
 import { Loading } from '~/components/Loading'
@@ -18,11 +20,21 @@ import { Loading } from '~/components/Loading'
 import { SignIn } from '~/screens/SignIn'
 
 import { Routes } from '~/routes'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { RealmProvider } from '~/libs/realm'
 
+SplashScreen.preventAutoHideAsync()
 export default function App() {
   const [fontsLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold })
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync()
+    }
+  }, [fontsLoaded])
+
+  useEffect(() => {
+    onLayoutRootView()
+  }, [onLayoutRootView])
+
+  if (!fontsLoaded) return <Loading />
 
   return (
     <AppProvider id={REALM_APP_ID}>
@@ -37,14 +49,11 @@ export default function App() {
               translucent
             />
 
-            {!fontsLoaded && <Loading />}
-            {fontsLoaded && (
-              <UserProvider fallback={<SignIn />}>
-                <RealmProvider>
-                  <Routes />
-                </RealmProvider>
-              </UserProvider>
-            )}
+            <UserProvider fallback={<SignIn />}>
+              <RealmProvider>
+                <Routes />
+              </RealmProvider>
+            </UserProvider>
           </SafeAreaProvider>
         </ThemeProvider>
       </QueryClientProvider>
