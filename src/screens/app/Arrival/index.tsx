@@ -1,14 +1,16 @@
 import { FC } from 'react'
 
 import { Header } from '~/components/Header'
+import { Button } from '~/components/Button'
 import { Body, Container, Label, LicensePlate, Purpose, Footer } from './styles'
 
 import { AppScreenProps } from '~/routes/app.routes'
-import { Button } from '~/components/Button'
+import { X } from 'phosphor-react-native'
+import { ButtonIcon } from '~/components/ButtonIcon'
 
 type Props = AppScreenProps<'arrival'>
 export const Arrival: FC<Props> = ({ route: { params } }) => {
-  const veihcleId = params.id
+  const vehicleId = params.id
   return (
     <Container>
       <Header title="Arrival" />
@@ -26,6 +28,7 @@ export const Arrival: FC<Props> = ({ route: { params } }) => {
         </Purpose>
       </Body>
       <Footer>
+        <ButtonIcon icon={X} />
         <Button label="Register Arrival" />
       </Footer>
     </Container>
