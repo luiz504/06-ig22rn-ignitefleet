@@ -3,6 +3,11 @@ import { Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useUser } from '@realm/react'
+
+import { useRealm } from '~/libs/realm'
+import { Historic } from '~/libs/realm/schemas/Historic'
+import { licensePlateSchema } from '~/utils/validations/licensePlateValidation'
 
 import { LicensePlateInput } from '~/screens/app/Departure/components/LicensePlateInput'
 import { PurposeCard } from '~/screens/app/Departure/components/PurposeCard'
@@ -11,9 +16,7 @@ import { Header } from '~/components/Header'
 import { FormFieldColumn, TextError } from '~/components/form'
 
 import { Container, Body } from './styles'
-import { licensePlateSchema } from '~/utils/validations/licensePlateValidation'
-import { useRealm, useUser } from '@realm/react'
-import { Historic } from '~/libs/realm/schemas/Historic'
+
 import { AppScreenProps } from '~/routes/app.routes'
 
 const KeyboardAvoidingViewBehavior =
