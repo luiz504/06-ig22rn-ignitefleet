@@ -13,6 +13,8 @@ export const theme = {
     GRAY_800: '#202024',
     GRAY_700: '#29292E',
     GRAY_600: '#323238',
+
+    ERROR_500: '#F75A68',
   },
   FONT_FAMILY: {
     REGULAR: 'Roboto_400Regular',

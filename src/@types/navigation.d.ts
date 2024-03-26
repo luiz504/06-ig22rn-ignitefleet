@@ -1,7 +1,7 @@
+import { AppRoutesList } from '~/routes/app.routes'
+
 export declare global {
   namespace ReactNavigation {
-    interface RootParamList {
-      home: undefined
-    }
+    interface RootParamList extends AppRoutesList {}
   }
 }
