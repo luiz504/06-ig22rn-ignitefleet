@@ -22,7 +22,7 @@ export const HomeScreen: FC<Props> = ({ navigation }) => {
       try {
         const vehicle = historic.filtered("status = 'departure'")[0]
 
-        return vehicle
+        return vehicle || null
       } catch (e) {
         Alert.alert('Error', 'Fail to get inuse vehicle data.')
         throw e
