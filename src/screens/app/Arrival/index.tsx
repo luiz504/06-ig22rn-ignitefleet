@@ -43,6 +43,25 @@ export const Arrival: FC<Props> = ({
     )
   }
 
+  const handleVehicleArrival = () => {
+    try {
+      if (!historic) {
+        return Alert.alert(
+          'Error',
+          "Was't possible to get vehicle data to register the arrival.",
+        )
+      }
+      realm.write(() => {
+        historic.status = 'arrival'
+        historic.updated_at = new Date()
+      })
+      Alert.alert('Success', 'Vehicle arrival successfully registered.')
+      goBack()
+    } catch (e) {
+      Alert.alert('Error', 'Fail to register vehicle arrival.')
+    }
+  }
+
   return (
     <Container>
       <Header title="Arrival" />
@@ -57,7 +76,7 @@ export const Arrival: FC<Props> = ({
       <Footer>
         <ButtonIcon icon={X} onPress={handleCancelVehicleUsage} />
 
-        <Button label="Register Arrival" />
+        <Button label="Register Arrival" onPress={handleVehicleArrival} />
       </Footer>
     </Container>
   )

@@ -1,5 +1,5 @@
-import React, { FC, useEffect } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { FC, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
 
 import { AppScreenProps } from '~/routes/app.routes'
 
@@ -16,11 +16,13 @@ export const HomeScreen: FC<Props> = ({ navigation }) => {
   const historic = useRealmQuery(Historic)
   const realm = useRealm()
 
-  const { data, mutateAsync: getVehicleInUsage } = useMutation({
-    mutationFn: async () => {
+  const { data, refetch } = useQuery({
+    queryKey: ['vehicle-in-usage'],
+    queryFn: async () => {
       const vehicle = historic.filtered("status = 'departure'")[0]
       return vehicle || null
     },
+    staleTime: 0,
   })
 
   const handleRegisterMovement = (vehicleId?: string) => {
@@ -32,13 +34,12 @@ export const HomeScreen: FC<Props> = ({ navigation }) => {
   }
 
   useEffect(() => {
-    getVehicleInUsage()
-    realm.addListener('change', () => getVehicleInUsage())
+    realm.addListener('change', () => refetch())
 
     return () => {
-      realm.removeListener('change', () => getVehicleInUsage())
+      realm.removeListener('change', () => refetch())
     }
-  }, [realm, getVehicleInUsage])
+  }, [realm, refetch])
 
   return (
     <Container>
