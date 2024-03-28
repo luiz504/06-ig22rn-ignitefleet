@@ -79,7 +79,9 @@ export const HomeScreen: FC<Props> = ({ navigation: { navigate } }) => {
     realm.addListener('change', update)
 
     return () => {
-      realm.removeListener('change', update)
+      if (realm && !realm.isClosed) {
+        realm.removeListener('change', update)
+      }
     }
   }, [realm, refetchVehicleInUse, refetchVehicleHistoric])
 

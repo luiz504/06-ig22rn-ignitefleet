@@ -7,15 +7,17 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Container, Greeting, Message, Name, Picture } from './styles'
 
 import { theme } from '~/theme'
+import { useQueryClient } from '@tanstack/react-query'
 
 export const Header: FC = () => {
   const profile = useUser().profile
   const app = useApp()
   const insets = useSafeAreaInsets()
-
+  const queryClient = useQueryClient()
   const paddingTop = insets.top + 32
   const handleSignOut = async () => {
     await app.currentUser?.logOut()
+    queryClient.clear()
   }
   return (
     <Container style={{ paddingTop }}>
