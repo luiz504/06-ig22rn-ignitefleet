@@ -2,6 +2,12 @@
 import { Realm } from '@realm/react'
 import { ObjectSchema } from 'realm'
 
+export const HISTORIC_STATUS = {
+  DEPARTURE: 'DEPARTURE',
+  ARRIVAL: 'ARRIVAL',
+} as const
+
+type HistoricStatus = keyof typeof HISTORIC_STATUS
 type GenerateProps = {
   user_id: string
   license_plate: string
@@ -12,7 +18,7 @@ export class Historic extends Realm.Object<Historic> {
   user_id!: string
   license_plate!: string
   description!: string
-  status!: string
+  status!: HistoricStatus
   created_at!: Date
   updated_at!: Date
 
@@ -22,7 +28,7 @@ export class Historic extends Realm.Object<Historic> {
       user_id,
       license_plate,
       description,
-      status: 'departure',
+      status: 'DEPARTURE',
       created_at: new Date(),
       updated_at: new Date(),
     }

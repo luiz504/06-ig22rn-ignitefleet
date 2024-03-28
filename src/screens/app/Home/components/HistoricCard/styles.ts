@@ -11,11 +11,9 @@ export const Container = styled.TouchableOpacity`
   justify-content: space-between;
   align-items: center;
 `
-
 export const Info = styled.View`
   flex: 1;
 `
-
 export const LicensePlate = styled.Text`
   color: ${({ theme }) => theme.COLORS.WHITE};
   font-size: ${({ theme }) => theme.FONT_SIZE.MD}px;
