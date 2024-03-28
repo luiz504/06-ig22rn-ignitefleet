@@ -1,9 +1,10 @@
-import { FC } from 'react'
-import { Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
+import React, { FC } from 'react'
+import { Alert, ScrollView } from 'react-native'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useUser } from '@realm/react'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { useRealm } from '~/libs/realm'
 import { Historic } from '~/libs/realm/schemas/Historic'
@@ -18,9 +19,6 @@ import { FormFieldColumn, TextError } from '~/components/form'
 import { Container, Body } from './styles'
 
 import { AppScreenProps } from '~/routes/app.routes'
-
-const KeyboardAvoidingViewBehavior =
-  Platform.OS === 'android' ? 'height' : 'position'
 
 const departureFormSchema = z.object({
   licensePlate: licensePlateSchema,
@@ -73,10 +71,7 @@ export const DepartureScreen: FC<Props> = ({ navigation }) => {
   return (
     <Container>
       <Header title="Departure" />
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={KeyboardAvoidingViewBehavior}
-      >
+      <KeyboardAwareScrollView extraHeight={100}>
         <ScrollView>
           <Body>
             <FormFieldColumn>
@@ -127,7 +122,7 @@ export const DepartureScreen: FC<Props> = ({ navigation }) => {
             />
           </Body>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     </Container>
   )
 }

@@ -1,4 +1,5 @@
 import 'react-native-get-random-values'
+import '~/libs/dayjs'
 import { useCallback, useEffect } from 'react'
 import { StatusBar } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'

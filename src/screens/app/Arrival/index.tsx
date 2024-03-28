@@ -52,7 +52,7 @@ export const Arrival: FC<Props> = ({
         )
       }
       realm.write(() => {
-        historic.status = 'arrival'
+        historic.status = 'ARRIVAL'
         historic.updated_at = new Date()
       })
       Alert.alert('Success', 'Vehicle arrival successfully registered.')
@@ -62,9 +62,11 @@ export const Arrival: FC<Props> = ({
     }
   }
 
+  const title = historic?.status === 'DEPARTURE' ? 'Arrival' : 'Details'
+
   return (
     <Container>
-      <Header title="Arrival" />
+      <Header title={title} />
 
       <Body>
         <Label>License plate</Label>
@@ -73,11 +75,14 @@ export const Arrival: FC<Props> = ({
         <Label>Purpose</Label>
         <Purpose>{historic?.description}</Purpose>
       </Body>
-      <Footer>
-        <ButtonIcon icon={X} onPress={handleCancelVehicleUsage} />
 
-        <Button label="Register Arrival" onPress={handleVehicleArrival} />
-      </Footer>
+      {historic?.status === 'DEPARTURE' && (
+        <Footer>
+          <ButtonIcon icon={X} onPress={handleCancelVehicleUsage} />
+
+          <Button label="Register Arrival" onPress={handleVehicleArrival} />
+        </Footer>
+      )}
     </Container>
   )
 }
