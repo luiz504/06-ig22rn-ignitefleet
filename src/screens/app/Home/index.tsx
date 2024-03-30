@@ -109,9 +109,7 @@ export const HomeScreen: FC<Props> = ({ navigation: { navigate } }) => {
     })
   }, [realm, user?.id])
 
-  const [percentageToSync, setPercentageToSync] = useState<string | null>(
-    'HEllo',
-  )
+  const [percentageToSync, setPercentageToSync] = useState<string | null>(null)
   const progressNotification: Realm.ProgressNotificationCallback = useCallback(
     async (transferred, transferable) => {
       const percentage = (transferred / transferable) * 100
