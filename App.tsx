@@ -22,6 +22,8 @@ import { SignIn } from '~/screens/auth/SignIn'
 
 import { Routes } from '~/routes'
 import { Loading } from '~/components/Loading'
+import { TopMessage } from '~/components/TopMessage'
+import { WifiSlash } from 'phosphor-react-native'
 
 SplashScreen.preventAutoHideAsync()
 export default function App() {
@@ -50,7 +52,7 @@ export default function App() {
               backgroundColor={'transparent'}
               translucent
             />
-
+            <TopMessage title="You are offline." icon={WifiSlash} />
             <UserProvider fallback={<SignIn />}>
               <RealmProvider sync={syncConfig} fallback={<Loading />}>
                 <Routes />
