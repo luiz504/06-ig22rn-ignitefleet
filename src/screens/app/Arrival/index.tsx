@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { X } from 'phosphor-react-native'
 import { BSON } from 'realm'
 import { Alert } from 'react-native'
@@ -9,9 +9,18 @@ import { useObject, useRealm } from '~/libs/realm'
 import { Header } from '~/components/Header'
 import { Button } from '~/components/Button'
 import { ButtonIcon } from '~/components/ButtonIcon'
-import { Body, Container, Label, LicensePlate, Purpose, Footer } from './styles'
+import {
+  Body,
+  Container,
+  Label,
+  LicensePlate,
+  Purpose,
+  Footer,
+  AsyncMessage,
+} from './styles'
 
 import { AppScreenProps } from '~/routes/app.routes'
+import { getLastSyncTimestamp } from '~/libs/async-storage'
 
 type Props = AppScreenProps<'arrival'>
 export const Arrival: FC<Props> = ({
@@ -64,6 +73,14 @@ export const Arrival: FC<Props> = ({
 
   const title = historic?.status === 'DEPARTURE' ? 'Arrival' : 'Details'
 
+  const [itemIsSynced, setItemIsSynced] = useState(false)
+
+  useEffect(() => {
+    getLastSyncTimestamp().then((lastSync) =>
+      setItemIsSynced((lastSync || 0) > (historic?.updated_at.getTime() || 0)),
+    )
+  }, [historic?.updated_at])
+
   return (
     <Container>
       <Header title={title} />
@@ -82,6 +99,13 @@ export const Arrival: FC<Props> = ({
 
           <Button label="Register Arrival" onPress={handleVehicleArrival} />
         </Footer>
+      )}
+
+      {!itemIsSynced && (
+        <AsyncMessage>
+          Synchronization of{' '}
+          {historic?.status === 'DEPARTURE' ? 'departure' : 'arrival'} pending.
+        </AsyncMessage>
       )}
     </Container>
   )

@@ -76,6 +76,20 @@ now the `Custom JWT Authentication` should be enabled.
   - Navigate to App Service => open the desired application and the copy the `App ID` value:
   - Then assign it to `REALM_APP_ID` env.
 
+### Cloud DB Sync (Mongo Atlas)
+
+Create the cloud DB and turn on Device sync with Development Mode
+
+- Navigate to App Services => select the project => Build => Device Sync => Start Syncing
+- Continue to sync
+- Sync type => Flexible
+- Enable Development Mode
+- Define a Database name
+- Enable Sync
+- Select the `User can read and write all data` role
+- On top notification => Review Draft and Deploy
+- Deploy
+
 ## Envs
 
 Due my lack of knowledge of the Envs best practices with react-native/expo and the

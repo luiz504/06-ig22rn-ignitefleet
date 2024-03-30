@@ -64,6 +64,7 @@ export const DepartureScreen: FC<Props> = ({ navigation }) => {
 
         navigation.goBack()
       } catch (err) {
+        console.log('err', err)
         Alert.alert('Error', 'Failed to register departure.')
       }
     },

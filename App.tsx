@@ -13,18 +13,23 @@ import * as SplashScreen from 'expo-splash-screen'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { AppProvider, UserProvider } from '@realm/react'
 import { REALM_APP_ID } from '@env'
+import { useNetInfo } from '@react-native-community/netinfo'
 
 import { theme } from '~/theme'
 import { queryClient } from '~/libs/react-query/queryClient'
-import { RealmProvider } from '~/libs/realm'
+import { RealmProvider, syncConfig } from '~/libs/realm'
 
 import { SignIn } from '~/screens/auth/SignIn'
 
 import { Routes } from '~/routes'
+import { Loading } from '~/components/Loading'
+import { TopMessage } from '~/components/TopMessage'
+import { WifiSlash } from 'phosphor-react-native'
 
 SplashScreen.preventAutoHideAsync()
 export default function App() {
   const [fontsLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold })
+  const netInfo = useNetInfo()
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync()
@@ -35,29 +40,40 @@ export default function App() {
     onLayoutRootView()
   }, [onLayoutRootView])
 
-  if (!fontsLoaded) return null
+  if (!fontsLoaded) {
+    return null
+  }
 
   return (
-    <AppProvider id={REALM_APP_ID}>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={theme}>
-          <SafeAreaProvider
-            style={{ flex: 1, backgroundColor: theme.COLORS.GRAY_800 }}
-          >
-            <StatusBar
-              barStyle={'light-content'}
-              backgroundColor={'transparent'}
-              translucent
-            />
+    <>
+      <StatusBar
+        barStyle={'light-content'}
+        backgroundColor={'transparent'}
+        translucent
+      />
 
-            <UserProvider fallback={<SignIn />}>
-              <RealmProvider>
-                <Routes />
-              </RealmProvider>
-            </UserProvider>
-          </SafeAreaProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </AppProvider>
+      <AppProvider id={REALM_APP_ID}>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider theme={theme}>
+            <SafeAreaProvider
+              style={{ flex: 1, backgroundColor: theme.COLORS.GRAY_800 }}
+            >
+              {!netInfo.isConnected && (
+                <TopMessage title="You are offline." icon={WifiSlash} />
+              )}
+              <UserProvider fallback={<SignIn />}>
+                <RealmProvider
+                  sync={syncConfig}
+                  fallback={<Loading />}
+                  closeOnUnmount={false}
+                >
+                  <Routes />
+                </RealmProvider>
+              </UserProvider>
+            </SafeAreaProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </AppProvider>
+    </>
   )
 }
