@@ -13,6 +13,7 @@ import * as SplashScreen from 'expo-splash-screen'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { AppProvider, UserProvider } from '@realm/react'
 import { REALM_APP_ID } from '@env'
+import { useNetInfo } from '@react-native-community/netinfo'
 
 import { theme } from '~/theme'
 import { queryClient } from '~/libs/react-query/queryClient'
@@ -28,6 +29,7 @@ import { WifiSlash } from 'phosphor-react-native'
 SplashScreen.preventAutoHideAsync()
 export default function App() {
   const [fontsLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold })
+  const netInfo = useNetInfo()
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync()
@@ -52,7 +54,9 @@ export default function App() {
               backgroundColor={'transparent'}
               translucent
             />
-            <TopMessage title="You are offline." icon={WifiSlash} />
+            {!netInfo.isConnected && (
+              <TopMessage title="You are offline." icon={WifiSlash} />
+            )}
             <UserProvider fallback={<SignIn />}>
               <RealmProvider sync={syncConfig} fallback={<Loading />}>
                 <Routes />
