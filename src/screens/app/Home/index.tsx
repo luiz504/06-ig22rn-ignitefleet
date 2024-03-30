@@ -2,6 +2,7 @@ import React, { FC, useEffect } from 'react'
 import { Alert, FlatList } from 'react-native'
 import { useUser } from '@realm/react'
 import { useQuery } from '@tanstack/react-query'
+import { Realm } from 'realm'
 import dayjs from 'dayjs'
 
 import { AppScreenProps } from '~/routes/app.routes'
@@ -98,6 +99,27 @@ export const HomeScreen: FC<Props> = ({ navigation: { navigate } }) => {
       })
     })
   }, [realm, user?.id])
+
+  const progressNotification: Realm.ProgressNotificationCallback = (
+    transferred,
+    transferable,
+  ) => {
+    const percentage = (transferred / transferable) * 100
+    console.log('dddd', { transferred, transferable, percentage })
+  }
+  useEffect(() => {
+    const syncSession = realm.syncSession
+
+    if (!syncSession) return
+    syncSession.addProgressNotification(
+      Realm.ProgressDirection.Upload,
+      Realm.ProgressMode.ReportIndefinitely,
+      progressNotification,
+    )
+    return () => {
+      syncSession.removeProgressNotification(progressNotification)
+    }
+  }, [realm.syncSession])
 
   return (
     <Container>

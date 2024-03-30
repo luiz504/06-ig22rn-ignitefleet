@@ -23,6 +23,7 @@
       },
       "package": "com.luiz504.ignitefleet"
     },
+
     "web": {
       "favicon": "./assets/favicon.png"
     },

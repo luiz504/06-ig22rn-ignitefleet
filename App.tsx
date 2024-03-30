@@ -40,31 +40,36 @@ export default function App() {
     onLayoutRootView()
   }, [onLayoutRootView])
 
-  if (!fontsLoaded) return null
+  if (!fontsLoaded) {
+    return null
+  }
 
   return (
-    <AppProvider id={REALM_APP_ID}>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={theme}>
-          <SafeAreaProvider
-            style={{ flex: 1, backgroundColor: theme.COLORS.GRAY_800 }}
-          >
-            <StatusBar
-              barStyle={'light-content'}
-              backgroundColor={'transparent'}
-              translucent
-            />
-            {!netInfo.isConnected && (
-              <TopMessage title="You are offline." icon={WifiSlash} />
-            )}
-            <UserProvider fallback={<SignIn />}>
-              <RealmProvider sync={syncConfig} fallback={<Loading />}>
-                <Routes />
-              </RealmProvider>
-            </UserProvider>
-          </SafeAreaProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </AppProvider>
+    <>
+      <StatusBar
+        barStyle={'light-content'}
+        backgroundColor={'transparent'}
+        translucent
+      />
+
+      <AppProvider id={REALM_APP_ID}>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider theme={theme}>
+            <SafeAreaProvider
+              style={{ flex: 1, backgroundColor: theme.COLORS.GRAY_800 }}
+            >
+              {!netInfo.isConnected && (
+                <TopMessage title="You are offline." icon={WifiSlash} />
+              )}
+              <UserProvider fallback={<SignIn />}>
+                <RealmProvider sync={syncConfig} fallback={<Loading />}>
+                  <Routes />
+                </RealmProvider>
+              </UserProvider>
+            </SafeAreaProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </AppProvider>
+    </>
   )
 }
