@@ -1,5 +1,6 @@
 import React, { FC, useEffect } from 'react'
 import { Alert, FlatList } from 'react-native'
+import { useUser } from '@realm/react'
 import { useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
@@ -21,6 +22,7 @@ type Props = AppScreenProps<'home'>
 export const HomeScreen: FC<Props> = ({ navigation: { navigate } }) => {
   const historic = useRealmQuery(Historic)
   const realm = useRealm()
+  const user = useUser()
 
   const { data: vehicleInUse, refetch: refetchVehicleInUse } = useQuery({
     queryKey: ['vehicle-in-usage'],
@@ -84,6 +86,18 @@ export const HomeScreen: FC<Props> = ({ navigation: { navigate } }) => {
       }
     }
   }, [realm, refetchVehicleInUse, refetchVehicleHistoric])
+
+  useEffect(() => {
+    realm.subscriptions.update((mutableSubs, _realm) => {
+      const historicByUserQuery = _realm
+        .objects('Historic')
+        .filtered(`user_id = '${user.id}'`)
+
+      mutableSubs.add(historicByUserQuery, {
+        name: 'historic_by_user',
+      })
+    })
+  }, [realm, user?.id])
 
   return (
     <Container>

@@ -16,11 +16,12 @@ import { REALM_APP_ID } from '@env'
 
 import { theme } from '~/theme'
 import { queryClient } from '~/libs/react-query/queryClient'
-import { RealmProvider } from '~/libs/realm'
+import { RealmProvider, syncConfig } from '~/libs/realm'
 
 import { SignIn } from '~/screens/auth/SignIn'
 
 import { Routes } from '~/routes'
+import { Loading } from '~/components/Loading'
 
 SplashScreen.preventAutoHideAsync()
 export default function App() {
@@ -51,7 +52,7 @@ export default function App() {
             />
 
             <UserProvider fallback={<SignIn />}>
-              <RealmProvider>
+              <RealmProvider sync={syncConfig} fallback={<Loading />}>
                 <Routes />
               </RealmProvider>
             </UserProvider>
