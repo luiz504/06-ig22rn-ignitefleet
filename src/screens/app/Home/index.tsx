@@ -1,28 +1,29 @@
-import React, { FC, useCallback, useEffect } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
 import { Alert, FlatList } from 'react-native'
 import { useUser } from '@realm/react'
 import { useQuery } from '@tanstack/react-query'
 import { Realm } from 'realm'
 import dayjs from 'dayjs'
-
+import { CloudArrowUp } from 'phosphor-react-native'
 import { AppScreenProps } from '~/routes/app.routes'
+import Toast from 'react-native-toast-message'
 
 import { useRealm, useQuery as useRealmQuery } from '~/libs/realm'
 import { HISTORIC_STATUS, Historic } from '~/libs/realm/schemas/Historic'
+import {
+  getLastSyncTimestamp,
+  saveLastSyncTimestamp,
+} from '~/libs/async-storage'
 
 import { Header } from './components/Header'
 import { VehicleStatus } from './components/VehicleStatus'
+import { TopMessage } from '~/components/TopMessage'
 
 import { Container, Body, Title, EmptyFeedback } from './styles'
 import {
   HistoricCard,
   HistoricCardDataType,
 } from '~/screens/app/Home/components/HistoricCard'
-import {
-  getLastSyncTimestamp,
-  saveLastSyncTimestamp,
-} from '~/libs/async-storage'
-import Toast from 'react-native-toast-message'
 
 type Props = AppScreenProps<'home'>
 export const HomeScreen: FC<Props> = ({ navigation: { navigate } }) => {
@@ -108,14 +109,20 @@ export const HomeScreen: FC<Props> = ({ navigation: { navigate } }) => {
     })
   }, [realm, user?.id])
 
+  const [percentageToSync, setPercentageToSync] = useState<string | null>(
+    'HEllo',
+  )
   const progressNotification: Realm.ProgressNotificationCallback = useCallback(
     async (transferred, transferable) => {
       const percentage = (transferred / transferable) * 100
       if (percentage === 100) {
         await saveLastSyncTimestamp()
         refetchVehicleHistoric()
-
+        setPercentageToSync(null)
         Toast.show({ type: 'info', text1: 'All data is Synced.' })
+      }
+      if (percentage < 100) {
+        setPercentageToSync(`${percentage.toFixed(2)}% synced.`)
       }
     },
     [refetchVehicleHistoric],
@@ -136,6 +143,9 @@ export const HomeScreen: FC<Props> = ({ navigation: { navigate } }) => {
 
   return (
     <Container>
+      {percentageToSync && (
+        <TopMessage title={percentageToSync} icon={CloudArrowUp} />
+      )}
       <Header />
 
       <Body>
