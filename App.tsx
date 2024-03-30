@@ -62,7 +62,11 @@ export default function App() {
                 <TopMessage title="You are offline." icon={WifiSlash} />
               )}
               <UserProvider fallback={<SignIn />}>
-                <RealmProvider sync={syncConfig} fallback={<Loading />}>
+                <RealmProvider
+                  sync={syncConfig}
+                  fallback={<Loading />}
+                  closeOnUnmount={false}
+                >
                   <Routes />
                 </RealmProvider>
               </UserProvider>

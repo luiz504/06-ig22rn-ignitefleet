@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useCallback, useEffect } from 'react'
 import { Alert, FlatList } from 'react-native'
 import { useUser } from '@realm/react'
 import { useQuery } from '@tanstack/react-query'
@@ -18,6 +18,10 @@ import {
   HistoricCard,
   HistoricCardDataType,
 } from '~/screens/app/Home/components/HistoricCard'
+import {
+  getLastSyncTimestamp,
+  saveLastSyncTimestamp,
+} from '~/libs/async-storage'
 
 type Props = AppScreenProps<'home'>
 export const HomeScreen: FC<Props> = ({ navigation: { navigate } }) => {
@@ -43,6 +47,9 @@ export const HomeScreen: FC<Props> = ({ navigation: { navigate } }) => {
         const histories = historic.filtered(
           `status = '${HISTORIC_STATUS.ARRIVAL}' SORT(created_at DESC)`,
         )
+
+        const lastSync = await getLastSyncTimestamp()
+
         const formatted = histories.map(
           (item) =>
             ({
@@ -51,7 +58,7 @@ export const HomeScreen: FC<Props> = ({ navigation: { navigate } }) => {
               createdAt: dayjs(item.created_at).format(
                 '[Departure on] DD/MM/YYYY [at] HH:mm',
               ),
-              isSynced: false,
+              isSynced: (lastSync || 0) > item.updated_at.getTime(),
             }) satisfies HistoricCardDataType,
         )
         return formatted
@@ -100,13 +107,16 @@ export const HomeScreen: FC<Props> = ({ navigation: { navigate } }) => {
     })
   }, [realm, user?.id])
 
-  const progressNotification: Realm.ProgressNotificationCallback = (
-    transferred,
-    transferable,
-  ) => {
-    const percentage = (transferred / transferable) * 100
-    console.log('dddd', { transferred, transferable, percentage })
-  }
+  const progressNotification: Realm.ProgressNotificationCallback = useCallback(
+    async (transferred, transferable) => {
+      const percentage = (transferred / transferable) * 100
+      if (percentage === 100) {
+        await saveLastSyncTimestamp()
+        refetchVehicleHistoric()
+      }
+    },
+    [refetchVehicleHistoric],
+  )
   useEffect(() => {
     const syncSession = realm.syncSession
 
@@ -119,7 +129,7 @@ export const HomeScreen: FC<Props> = ({ navigation: { navigate } }) => {
     return () => {
       syncSession.removeProgressNotification(progressNotification)
     }
-  }, [realm.syncSession])
+  }, [realm.syncSession, progressNotification])
 
   return (
     <Container>
