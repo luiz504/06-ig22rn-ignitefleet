@@ -34,3 +34,12 @@ export const Footer = styled.View`
   padding: 0 32px;
   margin: 32px 0;
 `
+export const AsyncMessage = styled.Text`
+  color: ${({ theme }) => theme.COLORS.GRAY_300};
+  font-size: ${({ theme }) => theme.FONT_SIZE.SM}px;
+  font-family: ${({ theme }) => theme.FONT_FAMILY.REGULAR};
+
+  text-align: center;
+  flex: 1;
+  margin: 32px;
+`
