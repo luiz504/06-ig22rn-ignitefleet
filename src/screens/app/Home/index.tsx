@@ -22,6 +22,7 @@ import {
   getLastSyncTimestamp,
   saveLastSyncTimestamp,
 } from '~/libs/async-storage'
+import Toast from 'react-native-toast-message'
 
 type Props = AppScreenProps<'home'>
 export const HomeScreen: FC<Props> = ({ navigation: { navigate } }) => {
@@ -113,6 +114,8 @@ export const HomeScreen: FC<Props> = ({ navigation: { navigate } }) => {
       if (percentage === 100) {
         await saveLastSyncTimestamp()
         refetchVehicleHistoric()
+
+        Toast.show({ type: 'info', text1: 'All data is Synced.' })
       }
     },
     [refetchVehicleHistoric],
