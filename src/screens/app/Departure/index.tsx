@@ -15,6 +15,8 @@ import { PurposeCard } from '~/screens/app/Departure/components/PurposeCard'
 import { Button } from '~/components/Button'
 import { Header } from '~/components/Header'
 import { FormFieldColumn, TextError } from '~/components/form'
+import { Loading } from '~/components/Button/styled'
+import { LocationInfo } from './components/LocationInfo'
 
 import { Container, Body } from './styles'
 
@@ -24,11 +26,13 @@ import { processForegroundLocationPermission } from '~/utils/permissions/process
 import { registerDeparture } from '~/useCases/register-departure'
 import {
   LocationAccuracy,
+  LocationObjectCoords,
   LocationSubscription,
   useForegroundPermissions,
   watchPositionAsync,
 } from 'expo-location'
 import { getAddressLocation } from '~/useCases/get-address-location'
+import { useMutation } from '@tanstack/react-query'
 
 const departureFormSchema = z.object({
   licensePlate: licensePlateSchema,
@@ -77,6 +81,17 @@ export const DepartureScreen: FC<Props> = ({ navigation }) => {
   }
 
   const [locationForegroundPermissions] = useForegroundPermissions()
+
+  const {
+    data: currentAddress = null,
+    mutateAsync: _getAddressLocation,
+    isPending,
+  } = useMutation({
+    mutationFn: async (coords: LocationObjectCoords) => {
+      return await getAddressLocation(coords)
+    },
+  })
+
   useEffect(() => {
     if (!locationForegroundPermissions?.granted) return
 
@@ -86,19 +101,15 @@ export const DepartureScreen: FC<Props> = ({ navigation }) => {
         accuracy: LocationAccuracy.High,
         timeInterval: 1000,
       },
-      (location) => {
-        getAddressLocation(location.coords).then((address) =>
-          console.log('add', address),
-        )
-      },
+      (location) => _getAddressLocation(location.coords),
     ).then((response) => {
       subscription = response
     })
 
     return () => {
-      subscription.remove()
+      subscription?.remove()
     }
-  }, [locationForegroundPermissions])
+  }, [locationForegroundPermissions, _getAddressLocation])
 
   return (
     <Container>
@@ -107,6 +118,12 @@ export const DepartureScreen: FC<Props> = ({ navigation }) => {
       <KeyboardAwareScrollView extraHeight={100}>
         <ScrollView>
           <Body>
+            {currentAddress && (
+              <LocationInfo
+                label="Current Address"
+                description={currentAddress?.street}
+              />
+            )}
             <FormFieldColumn>
               <Controller
                 control={control}
@@ -156,6 +173,22 @@ export const DepartureScreen: FC<Props> = ({ navigation }) => {
           </Body>
         </ScrollView>
       </KeyboardAwareScrollView>
+
+      {isPending && (
+        <Loading
+          style={{
+            position: 'absolute',
+            justifyContent: 'center',
+            alignItems: 'center',
+            pointerEvents: 'none',
+            top: 0,
+            right: 0,
+            left: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(5, 12, 20, 0.5)',
+          }}
+        />
+      )}
     </Container>
   )
 }
