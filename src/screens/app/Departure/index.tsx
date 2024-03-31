@@ -121,7 +121,7 @@ export const DepartureScreen: FC<Props> = ({ navigation }) => {
             {currentAddress && (
               <LocationInfo
                 label="Current Address"
-                description={currentAddress?.street}
+                description={currentAddress?.street || ''}
               />
             )}
             <FormFieldColumn>
