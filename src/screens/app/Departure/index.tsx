@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { Alert, ScrollView } from 'react-native'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -22,6 +22,12 @@ import { AppScreenProps } from '~/routes/app.routes'
 import { processForegroundLocationPermission } from '~/utils/permissions/processForegroundLocationPermission'
 
 import { registerDeparture } from '~/useCases/register-departure'
+import {
+  LocationAccuracy,
+  LocationSubscription,
+  useForegroundPermissions,
+  watchPositionAsync,
+} from 'expo-location'
 
 const departureFormSchema = z.object({
   licensePlate: licensePlateSchema,
@@ -68,6 +74,28 @@ export const DepartureScreen: FC<Props> = ({ navigation }) => {
       Alert.alert('Error', 'Failed to register departure.')
     }
   }
+
+  const [locationForegroundPermissions] = useForegroundPermissions()
+  useEffect(() => {
+    if (!locationForegroundPermissions?.granted) return
+
+    let subscription: LocationSubscription
+    watchPositionAsync(
+      {
+        accuracy: LocationAccuracy.High,
+        timeInterval: 1000,
+      },
+      (location) => {
+        console.log('location', location)
+      },
+    ).then((response) => {
+      subscription = response
+    })
+
+    return () => {
+      subscription.remove()
+    }
+  }, [locationForegroundPermissions])
 
   return (
     <Container>
