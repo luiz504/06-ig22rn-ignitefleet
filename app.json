@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "ignitefleet",
+    "name": "IgniteFleet",
     "slug": "ignitefleet",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -23,11 +23,18 @@
       },
       "package": "com.luiz504.ignitefleet"
     },
-
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-font"],
+    "plugins": [
+      "expo-font",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ]
+    ],
     "experiments": {
       "tsconfigPaths": true
     }

@@ -1,4 +1,4 @@
-rootProject.name = 'ignitefleet'
+rootProject.name = 'IgniteFleet'
 
 dependencyResolutionManagement {
   versionCatalogs {

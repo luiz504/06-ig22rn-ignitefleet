@@ -40,7 +40,9 @@
     "react-native-toast-message": "^2.2.0",
     "realm": "^12.6.2",
     "styled-components": "^6.1.8",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "expo-location": "~16.5.5",
+    "expo-linking": "~6.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

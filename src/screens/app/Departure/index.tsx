@@ -7,7 +7,7 @@ import { useUser } from '@realm/react'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { useRealm } from '~/libs/realm'
-import { Historic } from '~/libs/realm/schemas/Historic'
+
 import { licensePlateSchema } from '~/utils/validations/licensePlateValidation'
 
 import { LicensePlateInput } from '~/screens/app/Departure/components/LicensePlateInput'
@@ -19,6 +19,9 @@ import { FormFieldColumn, TextError } from '~/components/form'
 import { Container, Body } from './styles'
 
 import { AppScreenProps } from '~/routes/app.routes'
+import { processForegroundLocationPermission } from '~/utils/permissions/processForegroundLocationPermission'
+
+import { registerDeparture } from '~/useCases/register-departure'
 
 const departureFormSchema = z.object({
   licensePlate: licensePlateSchema,
@@ -46,32 +49,30 @@ export const DepartureScreen: FC<Props> = ({ navigation }) => {
   const realm = useRealm()
   const user = useUser()
 
-  const handleDepartureRegister = handleSubmit(
-    async (data: DepartureFormData) => {
-      try {
-        realm.write(() => {
-          realm.create(
-            'Historic',
-            Historic.generate({
-              user_id: user!.id,
-              license_plate: data.licensePlate,
-              description: data.purpose,
-            }),
-          )
-        })
+  const handleRegisterDeparture = async (data: DepartureFormData) => {
+    const result = await processForegroundLocationPermission()
 
-        Alert.alert('Success', 'Departure registered successfully')
+    if (result !== 'GRANTED') return
 
-        navigation.goBack()
-      } catch (err) {
-        console.log('err', err)
-        Alert.alert('Error', 'Failed to register departure.')
-      }
-    },
-  )
+    try {
+      await registerDeparture(realm, {
+        userId: user!.id,
+        description: data.purpose,
+        licensePlate: data.licensePlate,
+      })
+
+      Alert.alert('Success', 'Departure registered successfully')
+
+      navigation.goBack()
+    } catch (err) {
+      Alert.alert('Error', 'Failed to register departure.')
+    }
+  }
+
   return (
     <Container>
       <Header title="Departure" />
+
       <KeyboardAwareScrollView extraHeight={100}>
         <ScrollView>
           <Body>
@@ -103,7 +104,7 @@ export const DepartureScreen: FC<Props> = ({ navigation }) => {
                 render={({ field: { ref, value, onChange, disabled } }) => (
                   <PurposeCard
                     label="Purpose"
-                    onSubmitEditing={handleDepartureRegister}
+                    onSubmitEditing={handleSubmit(handleRegisterDeparture)}
                     returnKeyType="send"
                     blurOnSubmit
                     ref={ref}
@@ -118,7 +119,7 @@ export const DepartureScreen: FC<Props> = ({ navigation }) => {
 
             <Button
               label="Register Departure"
-              onPress={handleDepartureRegister}
+              onPress={handleSubmit(handleRegisterDeparture)}
               isLoading={isSubmitting}
             />
           </Body>
