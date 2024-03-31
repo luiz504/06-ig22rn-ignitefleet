@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useUser } from '@realm/react'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { useMutation } from '@tanstack/react-query'
 
 import { useRealm } from '~/libs/realm'
 
@@ -32,7 +33,7 @@ import {
   watchPositionAsync,
 } from 'expo-location'
 import { getAddressLocation } from '~/useCases/get-address-location'
-import { useMutation } from '@tanstack/react-query'
+import { Car } from 'phosphor-react-native'
 
 const departureFormSchema = z.object({
   licensePlate: licensePlateSchema,
@@ -120,6 +121,7 @@ export const DepartureScreen: FC<Props> = ({ navigation }) => {
           <Body>
             {currentAddress && (
               <LocationInfo
+                icon={Car}
                 label="Current Address"
                 description={currentAddress?.street || ''}
               />
