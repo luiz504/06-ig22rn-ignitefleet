@@ -28,6 +28,7 @@ import {
   useForegroundPermissions,
   watchPositionAsync,
 } from 'expo-location'
+import { getAddressLocation } from '~/useCases/get-address-location'
 
 const departureFormSchema = z.object({
   licensePlate: licensePlateSchema,
@@ -86,7 +87,9 @@ export const DepartureScreen: FC<Props> = ({ navigation }) => {
         timeInterval: 1000,
       },
       (location) => {
-        console.log('location', location)
+        getAddressLocation(location.coords).then((address) =>
+          console.log('add', address),
+        )
       },
     ).then((response) => {
       subscription = response
