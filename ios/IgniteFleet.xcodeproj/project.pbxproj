@@ -14,7 +14,7 @@
 		96905EF65AED1B983A6B3ABC /* libPods-IgniteFleet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-IgniteFleet.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		1AAD48FBC93243B6B5E2219C /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC652EC83D04FCD8536E4D9 /* noop-file.swift */; };
+		A59C83B7A3A44DE29BC1A59F /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DD2475C9924241816AE27C /* noop-file.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,8 +31,8 @@
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-IgniteFleet/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		5EC652EC83D04FCD8536E4D9 /* noop-file.swift */ = {isa = PBXFileReference; name = "noop-file.swift"; path = "IgniteFleet/noop-file.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		726B06E1A7D04C1A8CD8FEE0 /* IgniteFleet-Bridging-Header.h */ = {isa = PBXFileReference; name = "IgniteFleet-Bridging-Header.h"; path = "IgniteFleet/IgniteFleet-Bridging-Header.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		04DD2475C9924241816AE27C /* noop-file.swift */ = {isa = PBXFileReference; name = "noop-file.swift"; path = "IgniteFleet/noop-file.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		4CB693DC0FF5468D899CDD13 /* IgniteFleet-Bridging-Header.h */ = {isa = PBXFileReference; name = "IgniteFleet-Bridging-Header.h"; path = "IgniteFleet/IgniteFleet-Bridging-Header.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,8 +57,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				5EC652EC83D04FCD8536E4D9 /* noop-file.swift */,
-				726B06E1A7D04C1A8CD8FEE0 /* IgniteFleet-Bridging-Header.h */,
+				04DD2475C9924241816AE27C /* noop-file.swift */,
+				4CB693DC0FF5468D899CDD13 /* IgniteFleet-Bridging-Header.h */,
 			);
 			name = IgniteFleet;
 			sourceTree = "<group>";
@@ -198,7 +198,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				5641FA0EA5B34EF29D9B0DD3 /* IgniteFleet-Bridging-Header.h in Resources */,
+				548B501B55AD45BC8C9829C9 /* IgniteFleet-Bridging-Header.h in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,7 +274,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				1AAD48FBC93243B6B5E2219C /* noop-file.swift in Sources */,
+				A59C83B7A3A44DE29BC1A59F /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
