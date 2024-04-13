@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { useUser } from '@realm/react'
+import * as Linking from 'expo-linking'
 import {
   useForegroundPermissions,
   LocationSubscription,
@@ -69,7 +70,8 @@ export const useDepartureController = () => {
     }
   }
 
-  const [locationForegroundPermissions] = useForegroundPermissions()
+  const [locationForegroundPermissions, requestPermission] =
+    useForegroundPermissions()
 
   const {
     data: currentAddress = null,
@@ -80,6 +82,15 @@ export const useDepartureController = () => {
       return await getAddressLocation(coords)
     },
   })
+
+  useEffect(() => {
+    if (
+      !locationForegroundPermissions?.granted &&
+      locationForegroundPermissions?.canAskAgain
+    ) {
+      requestPermission()
+    }
+  }, [locationForegroundPermissions, requestPermission])
 
   useEffect(() => {
     if (!locationForegroundPermissions?.granted) return
@@ -103,6 +114,15 @@ export const useDepartureController = () => {
     }
   }, [locationForegroundPermissions, _getAddressLocation])
 
+  const showRequiredPermissionMessage =
+    locationForegroundPermissions &&
+    !locationForegroundPermissions.granted &&
+    !locationForegroundPermissions.canAskAgain
+
+  const handleOpenAppSettings = async () => {
+    await Linking.openSettings()
+  }
+
   return {
     control,
     setFocus,
@@ -110,8 +130,10 @@ export const useDepartureController = () => {
     errors,
     handleSubmit,
     handleRegisterDeparture,
+    handleOpenAppSettings,
     currentAddress,
     isPending,
     currentCoordinates,
+    showRequiredPermissionMessage,
   }
 }
