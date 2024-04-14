@@ -43,6 +43,7 @@ export async function startLocationTask() {
     })
   } catch (err) {
     console.log('err startLocationTask ', err) // eslint-disable-line
+    throw err
   }
 }
 export async function stopLocationTask() {
@@ -54,5 +55,6 @@ export async function stopLocationTask() {
     }
   } catch (err) {
     console.log('err stopLocationTask ', err) // eslint-disable-line
+    throw err
   }
 }

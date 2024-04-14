@@ -21,6 +21,7 @@ import {
 
 import { AppScreenProps } from '~/routes/app.routes'
 import { getLastSyncTimestamp } from '~/libs/async-storage'
+import { stopLocationTask } from '~/tasks/background-location-task'
 
 type Props = AppScreenProps<'arrival'>
 export const Arrival: FC<Props> = ({
@@ -52,7 +53,7 @@ export const Arrival: FC<Props> = ({
     )
   }
 
-  const handleVehicleArrival = () => {
+  const handleVehicleArrival = async () => {
     try {
       if (!historic) {
         return Alert.alert(
@@ -60,6 +61,7 @@ export const Arrival: FC<Props> = ({
           "Was't possible to get vehicle data to register the arrival.",
         )
       }
+      await stopLocationTask()
       realm.write(() => {
         historic.status = 'ARRIVAL'
         historic.updated_at = new Date()
