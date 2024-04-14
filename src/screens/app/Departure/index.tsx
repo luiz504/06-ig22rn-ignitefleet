@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import React, { FC } from 'react'
 import { ScrollView } from 'react-native'
 import { Controller } from 'react-hook-form'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -12,7 +12,7 @@ import { LocationInfo } from './components/LocationInfo'
 import { LicensePlateInput } from './components/LicensePlateInput'
 import { PurposeCard } from './components/PurposeCard'
 
-import { Container, Body } from './styles'
+import { Container, Body, MapPlaceholder } from './styles'
 
 import { useDepartureController } from './controller'
 import { Map } from '~/components/Map'
@@ -49,7 +49,11 @@ export const DepartureScreen: FC = () => {
         )}
         {!showRequiredPermissionMessage && (
           <ScrollView>
-            {!!currentCoordinates && <Map coordinates={[currentCoordinates]} />}
+            <MapPlaceholder>
+              {!!currentCoordinates && (
+                <Map coordinates={[currentCoordinates]} zoomControlEnabled />
+              )}
+            </MapPlaceholder>
             <Body>
               {currentAddress && (
                 <LocationInfo
