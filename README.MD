@@ -27,6 +27,13 @@ here it will need 3 OAuth 2.0 Clients credentials for each enviroment Android, I
 
 Take each OAuth client_id and fill its respective Enviroment Variable following the [Envs](#envs) instructions.
 
+## Maps
+
+Project => APIs and Services => ENABLE APIS AND SERVICES => Maps SDK for Android => Enable
+
+Project => APIs and Services => Credentials => CREATE CREDENTIALS => API key
+It will create a generic API key to access, you can manage what application or APIs this key can access on => Actions => Edit API key
+
 #### Sha-1 fingerprint
 
 ```bash
