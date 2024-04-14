@@ -18,9 +18,9 @@ import {
 import { getAddressLocation } from '~/useCases/get-address-location'
 import { registerDeparture } from '~/useCases/register-departure'
 
-import { processForegroundLocationPermission } from '~/utils/permissions/processForegroundLocationPermission'
 import { licensePlateSchema } from '~/utils/validations/licensePlateValidation'
 import { useRealm } from '~/libs/realm'
+import { processBackgroundLocationPermission } from '~/utils/permissions/processBackgroundLocationPermission'
 
 const departureFormSchema = z.object({
   licensePlate: licensePlateSchema,
@@ -50,11 +50,7 @@ export const useDepartureController = () => {
   const realm = useRealm()
   const user = useUser()
 
-  const handleRegisterDeparture = async (data: DepartureFormData) => {
-    const result = await processForegroundLocationPermission()
-
-    if (result !== 'GRANTED') return
-
+  const processDeparture = async (data: DepartureFormData) => {
     try {
       await registerDeparture(realm, {
         userId: user!.id,
@@ -67,6 +63,16 @@ export const useDepartureController = () => {
       navigation.goBack()
     } catch (err) {
       Alert.alert('Error', 'Failed to register departure.')
+    }
+  }
+  const handleRegisterDeparture = async (data: DepartureFormData) => {
+    if (!currentCoordinates?.latitude && !currentCoordinates?.longitude) {
+      return Alert.alert('Error', 'Location not found.')
+    }
+    const permission = await processBackgroundLocationPermission()
+
+    if (permission === 'GRANTED') {
+      processDeparture(data)
     }
   }
 

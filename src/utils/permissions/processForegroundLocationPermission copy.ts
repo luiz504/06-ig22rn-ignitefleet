@@ -6,15 +6,11 @@ type Response = 'GRANTED' | 'DENIED' | 'CANCELED'
 export const processForegroundLocationPermission =
   async (): Promise<Response> => {
     const currentPermission = await Location.getForegroundPermissionsAsync()
-    console.log('dd', currentPermission)
+
     if (currentPermission.granted) {
       return 'GRANTED'
     }
-    if (
-      currentPermission.status === Location.PermissionStatus.UNDETERMINED ||
-      (currentPermission.status === Location.PermissionStatus.DENIED &&
-        currentPermission.canAskAgain)
-    ) {
+    if (currentPermission.canAskAgain) {
       const newPermission = await Location.requestForegroundPermissionsAsync()
 
       if (newPermission.granted) {
@@ -33,8 +29,7 @@ export const processForegroundLocationPermission =
             {
               text: 'Open Settings',
               onPress: async () => {
-                await Linking.openSettings()
-                resolve('CANCELED')
+                Promise.all([Linking.openSettings(), resolve('CANCELED')])
               },
               style: 'default',
             },
