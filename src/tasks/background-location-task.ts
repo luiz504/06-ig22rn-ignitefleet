@@ -3,29 +3,38 @@ import {
   hasStartedLocationUpdatesAsync,
   startLocationUpdatesAsync,
   stopLocationUpdatesAsync,
+  LocationObject,
 } from 'expo-location'
 import * as TaskManager from 'expo-task-manager'
+import { saveStorageLocation } from '~/libs/async-storage/location-storage'
 
 export const BACKGROUND_TASK_NAME = 'location-tracking'
+type TaskData = {
+  locations?: LocationObject[]
+}
 
-TaskManager.defineTask(BACKGROUND_TASK_NAME, ({ data, error }: any) => {
-  try {
-    if (error) throw error
+TaskManager.defineTask<TaskData>(
+  BACKGROUND_TASK_NAME,
+  async ({ data, error }) => {
+    try {
+      if (error) throw error
+      if (data.locations) {
+        const coords = data.locations[0].coords
+        const timestamp = data.locations[0].timestamp
 
-    const coords = data?.locations[0].coords
-    const timeStamp = data?.locations[0].timestamp
-
-    const currentLocation = {
-      latitude: coords.latitude,
-      longitude: coords.longitude,
-      timeStamp,
-    }
-    console.log('cc', currentLocation)
-  } catch (err) {
+        const currentLocation = {
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+          timestamp,
+        }
+        await saveStorageLocation(currentLocation)
+      }
+    } catch (err) {
     console.log('err ' + BACKGROUND_TASK_NAME , err) // eslint-disable-line
-    throw err
-  }
-})
+      stopLocationTask()
+    }
+  },
+)
 
 export async function startLocationTask() {
   try {
