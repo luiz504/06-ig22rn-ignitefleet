@@ -21,6 +21,7 @@ import { registerDeparture } from '~/useCases/register-departure'
 import { licensePlateSchema } from '~/utils/validations/licensePlateValidation'
 import { useRealm } from '~/libs/realm'
 import { processBackgroundLocationPermission } from '~/utils/permissions/processBackgroundLocationPermission'
+import { startLocationTask } from '~/tasks/background-location-task'
 
 const departureFormSchema = z.object({
   licensePlate: licensePlateSchema,
@@ -52,6 +53,7 @@ export const useDepartureController = () => {
 
   const processDeparture = async (data: DepartureFormData) => {
     try {
+      await startLocationTask()
       await registerDeparture(realm, {
         userId: user!.id,
         description: data.purpose,

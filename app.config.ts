@@ -53,6 +53,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       {
         locationAlwaysAndWhenInUsePermission:
           'Allow $(PRODUCT_NAME) to use your location.',
+        isAndroidForegroundServiceEnabled: true,
+        isAndroidBackgroundLocationEnabled: true,
       },
     ],
   ],
