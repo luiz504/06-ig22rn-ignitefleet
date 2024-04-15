@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
 import { X } from 'phosphor-react-native'
 import { BSON } from 'realm'
 import { Alert } from 'react-native'
@@ -22,6 +22,9 @@ import {
 import { AppScreenProps } from '~/routes/app.routes'
 import { getLastSyncTimestamp } from '~/libs/async-storage'
 import { stopLocationTask } from '~/tasks/background-location-task'
+import { getStorageLocations } from '~/libs/async-storage/location-storage'
+import { LatLng } from 'react-native-maps'
+import { Map, MapPlaceholder } from '~/components/Map'
 
 type Props = AppScreenProps<'arrival'>
 export const Arrival: FC<Props> = ({
@@ -39,6 +42,7 @@ export const Arrival: FC<Props> = ({
     realm.write(() => {
       realm.delete(historic)
     })
+    await stopLocationTask()
 
     goBack()
   }
@@ -61,11 +65,12 @@ export const Arrival: FC<Props> = ({
           "Was't possible to get vehicle data to register the arrival.",
         )
       }
-      await stopLocationTask()
+
       realm.write(() => {
         historic.status = 'ARRIVAL'
         historic.updated_at = new Date()
       })
+      await stopLocationTask()
       Alert.alert('Success', 'Vehicle arrival successfully registered.')
       goBack()
     } catch (e) {
@@ -76,17 +81,29 @@ export const Arrival: FC<Props> = ({
   const title = historic?.status === 'DEPARTURE' ? 'Arrival' : 'Details'
 
   const [itemIsSynced, setItemIsSynced] = useState(false)
+  const [coordinates, setCoordinates] = useState<LatLng[]>([])
+  const getLocationInfo = useCallback(async () => {
+    const lastSync = await getLastSyncTimestamp()
+    const updatedAt = historic?.updated_at.getTime()
+    setItemIsSynced((lastSync || 0) > (updatedAt || 0))
+
+    const storedLocations = await getStorageLocations()
+    setCoordinates(storedLocations)
+  }, [historic?.updated_at])
 
   useEffect(() => {
-    getLastSyncTimestamp().then((lastSync) =>
-      setItemIsSynced((lastSync || 0) > (historic?.updated_at.getTime() || 0)),
-    )
-  }, [historic?.updated_at])
+    getLocationInfo()
+  }, [getLocationInfo])
 
   return (
     <Container>
       <Header title={title} />
 
+      <MapPlaceholder>
+        {!!coordinates.length && (
+          <Map coordinates={coordinates} zoomControlEnabled />
+        )}
+      </MapPlaceholder>
       <Body>
         <Label>License plate</Label>
         <LicensePlate>{historic?.license_plate}</LicensePlate>

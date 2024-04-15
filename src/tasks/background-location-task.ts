@@ -6,7 +6,10 @@ import {
   LocationObject,
 } from 'expo-location'
 import * as TaskManager from 'expo-task-manager'
-import { saveStorageLocation } from '~/libs/async-storage/location-storage'
+import {
+  removeStorageLocations,
+  saveStorageLocation,
+} from '~/libs/async-storage/location-storage'
 
 export const BACKGROUND_TASK_NAME = 'location-tracking'
 type TaskData = {
@@ -61,6 +64,7 @@ export async function stopLocationTask() {
       await hasStartedLocationUpdatesAsync(BACKGROUND_TASK_NAME)
     if (hasStarted) {
       await stopLocationUpdatesAsync(BACKGROUND_TASK_NAME)
+      await removeStorageLocations()
     }
   } catch (err) {
     console.log('err stopLocationTask ', err) // eslint-disable-line

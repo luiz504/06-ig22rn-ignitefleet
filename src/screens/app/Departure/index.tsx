@@ -12,10 +12,10 @@ import { LocationInfo } from './components/LocationInfo'
 import { LicensePlateInput } from './components/LicensePlateInput'
 import { PurposeCard } from './components/PurposeCard'
 
-import { Container, Body, MapPlaceholder } from './styles'
+import { Container, Body } from './styles'
 
 import { useDepartureController } from './controller'
-import { Map } from '~/components/Map'
+import { Map, MapPlaceholder } from '~/components/Map'
 import { OpenSettingsFB } from '~/components/feedbacks/OpenSettingsFB'
 
 export const DepartureScreen: FC = () => {
