@@ -83,8 +83,9 @@ export const Arrival: FC<Props> = ({
   const [itemIsSynced, setItemIsSynced] = useState(false)
   const [coordinates, setCoordinates] = useState<LatLng[]>([])
   const getLocationInfo = useCallback(async () => {
+    if (!historic?.updated_at) return
     const lastSync = await getLastSyncTimestamp()
-    const updatedAt = historic?.updated_at.getTime()
+    const updatedAt = historic.updated_at.getTime()
     setItemIsSynced((lastSync || 0) > (updatedAt || 0))
 
     const storedLocations = await getStorageLocations()
