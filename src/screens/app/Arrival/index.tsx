@@ -26,6 +26,7 @@ import { getStorageLocations } from '~/libs/async-storage/location-storage'
 import { LatLng } from 'react-native-maps'
 import { Map, MapPlaceholder } from '~/components/Map'
 import { registerArrival } from '~/useCases/register-arrival'
+import { Locations } from '~/components/Locations'
 
 type Props = AppScreenProps<'arrival'>
 export const Arrival: FC<Props> = ({
@@ -93,9 +94,10 @@ export const Arrival: FC<Props> = ({
       setCoordinates(storedLocations)
     } else {
       const coords =
-        historic?.coords?.map(({ latitude, longitude }) => ({
+        historic?.coords?.map(({ latitude, longitude, timestamp }) => ({
           latitude,
           longitude,
+          timestamp,
         })) || []
       setCoordinates(coords)
     }
@@ -115,6 +117,13 @@ export const Arrival: FC<Props> = ({
         )}
       </MapPlaceholder>
       <Body>
+        {historic?.status === 'ARRIVAL' && (
+          <Locations
+            departure={{ label: 'Departure', description: 'desc' }}
+            arrival={{ label: 'Arrival', description: 'desc' }}
+            style={{ marginBottom: 32 }}
+          />
+        )}
         <Label>License plate</Label>
         <LicensePlate>{historic?.license_plate}</LicensePlate>
 
