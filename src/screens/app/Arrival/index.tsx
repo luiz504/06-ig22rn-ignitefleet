@@ -25,6 +25,7 @@ import { stopLocationTask } from '~/tasks/background-location-task'
 import { getStorageLocations } from '~/libs/async-storage/location-storage'
 import { LatLng } from 'react-native-maps'
 import { Map, MapPlaceholder } from '~/components/Map'
+import { registerArrival } from '~/useCases/register-arrival'
 
 type Props = AppScreenProps<'arrival'>
 export const Arrival: FC<Props> = ({
@@ -65,11 +66,9 @@ export const Arrival: FC<Props> = ({
           "Was't possible to get vehicle data to register the arrival.",
         )
       }
-
-      realm.write(() => {
-        historic.status = 'ARRIVAL'
-        historic.updated_at = new Date()
-      })
+      const locations = await getStorageLocations()
+      console.log(locations)
+      await registerArrival(realm, historic, locations)
       await stopLocationTask()
       Alert.alert('Success', 'Vehicle arrival successfully registered.')
       goBack()
