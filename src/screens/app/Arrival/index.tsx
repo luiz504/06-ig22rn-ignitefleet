@@ -1,14 +1,24 @@
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import React, { FC, useCallback } from 'react'
 import { X } from 'phosphor-react-native'
 import { BSON } from 'realm'
 import { Alert } from 'react-native'
+import { LatLng } from 'react-native-maps'
+import dayjs from 'dayjs'
+import { useQuery } from '@tanstack/react-query'
 
 import { Historic } from '~/libs/realm/schemas/Historic'
+import { getLastSyncTimestamp } from '~/libs/async-storage'
 import { useObject, useRealm } from '~/libs/realm'
+import { getStorageLocations } from '~/libs/async-storage/location-storage'
 
 import { Header } from '~/components/Header'
 import { Button } from '~/components/Button'
 import { ButtonIcon } from '~/components/ButtonIcon'
+import { Locations } from '~/components/Locations'
+import { Loading } from '~/components/Loading'
+import { Map, MapPlaceholder } from '~/components/Map'
+import { LocationInfoProps } from '../Departure/components/LocationInfo'
+
 import {
   Body,
   Container,
@@ -20,16 +30,10 @@ import {
 } from './styles'
 
 import { AppScreenProps } from '~/routes/app.routes'
-import { getLastSyncTimestamp } from '~/libs/async-storage'
 import { stopLocationTask } from '~/tasks/background-location-task'
-import { getStorageLocations } from '~/libs/async-storage/location-storage'
-import { LatLng } from 'react-native-maps'
-import { Map, MapPlaceholder } from '~/components/Map'
+
 import { registerArrival } from '~/useCases/register-arrival'
-import { Locations } from '~/components/Locations'
 import { getAddressLocation } from '~/useCases/get-address-location'
-import { LocationInfoProps } from '../Departure/components/LocationInfo'
-import dayjs from 'dayjs'
 
 type Props = AppScreenProps<'arrival'>
 export const Arrival: FC<Props> = ({
@@ -83,22 +87,19 @@ export const Arrival: FC<Props> = ({
 
   const title = historic?.status === 'DEPARTURE' ? 'Arrival' : 'Details'
 
-  const [itemIsSynced, setItemIsSynced] = useState(false)
-  const [coordinates, setCoordinates] = useState<LatLng[]>([])
-  const [departure, setDeparture] = useState<LocationInfoProps>(
-    {} as LocationInfoProps,
-  )
-  const [arrival, setArrival] = useState<LocationInfoProps | null>(null)
-
   const getLocationInfo = useCallback(async () => {
     if (!historic?.updated_at) return
+    let departure: LocationInfoProps = {} as LocationInfoProps
+    let arrival: LocationInfoProps | null = null
+    let coordinates: LatLng[] = []
+
     const lastSync = await getLastSyncTimestamp()
     const updatedAt = historic.updated_at.getTime()
-    setItemIsSynced((lastSync || 0) > (updatedAt || 0))
+    const itemIsSynced = (lastSync || 0) > (updatedAt || 0)
 
     if (historic?.status === 'DEPARTURE') {
       const storedLocations = await getStorageLocations()
-      setCoordinates(storedLocations)
+      coordinates = storedLocations
     } else {
       const coords =
         historic?.coords?.map(({ latitude, longitude, timestamp }) => ({
@@ -106,34 +107,51 @@ export const Arrival: FC<Props> = ({
           longitude,
           timestamp,
         })) || []
-      setCoordinates(coords)
+      coordinates = coords
     }
 
     if (historic?.coords[0]) {
       const departureLocation = await getAddressLocation(historic?.coords[0])
-      setDeparture({
+      departure = {
         label: `Departing from ${departureLocation.street ?? ''}`,
         description: dayjs(new Date(historic?.coords[0].timestamp)).format(
           'DD/MM/YYYY [at] HH:mm',
         ),
-      })
+      }
     }
 
     if (historic?.status === 'ARRIVAL') {
       const lastCoord = historic.coords[historic.coords.length - 1]
       const arrivalLocation = await getAddressLocation(lastCoord)
-      setArrival({
+      arrival = {
         label: `Arrival at ${arrivalLocation.street ?? ''}`,
         description: dayjs(new Date(lastCoord.timestamp)).format(
           'DD/MM/YYYY [at] HH:mm',
         ),
-      })
+      }
+    }
+    return {
+      departure,
+      arrival,
+      coordinates,
+      itemIsSynced,
     }
   }, [historic])
 
-  useEffect(() => {
-    getLocationInfo()
-  }, [getLocationInfo])
+  const { data, isLoading } = useQuery({
+    queryKey: ['get-location-info', { item: historic?._id }],
+    queryFn: getLocationInfo,
+    staleTime: 0,
+    enabled: !!historic?._id,
+  })
+  const departure = data?.departure || ({} as LocationInfoProps)
+  const arrival = data?.arrival || null
+  const coordinates = data?.coordinates || []
+  const itemIsSynced = data?.itemIsSynced || false
+
+  if (isLoading) {
+    return <Loading />
+  }
 
   return (
     <Container>
