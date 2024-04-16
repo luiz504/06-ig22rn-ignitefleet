@@ -10,10 +10,6 @@ export const Body = styled.View`
   padding: 32px;
   margin-top: 16px;
 `
-export const MapPlaceholder = styled.View`
-  background-color: #44403c;
-  min-height: 200px;
-`
 
 export const MessageContainer = styled.View`
   padding: 24px;

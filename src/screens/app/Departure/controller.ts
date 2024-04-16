@@ -14,13 +14,15 @@ import {
   LocationAccuracy,
   LocationObjectCoords,
 } from 'expo-location'
+import { LatLng } from 'react-native-maps'
 
 import { getAddressLocation } from '~/useCases/get-address-location'
 import { registerDeparture } from '~/useCases/register-departure'
 
-import { processForegroundLocationPermission } from '~/utils/permissions/processForegroundLocationPermission'
 import { licensePlateSchema } from '~/utils/validations/licensePlateValidation'
 import { useRealm } from '~/libs/realm'
+import { processBackgroundLocationPermission } from '~/utils/permissions/processBackgroundLocationPermission'
+import { startLocationTask } from '~/tasks/background-location-task'
 
 const departureFormSchema = z.object({
   licensePlate: licensePlateSchema,
@@ -50,16 +52,20 @@ export const useDepartureController = () => {
   const realm = useRealm()
   const user = useUser()
 
-  const handleRegisterDeparture = async (data: DepartureFormData) => {
-    const result = await processForegroundLocationPermission()
-
-    if (result !== 'GRANTED') return
-
+  const processDeparture = async (data: DepartureFormData, coords: LatLng) => {
     try {
+      await startLocationTask()
       await registerDeparture(realm, {
         userId: user!.id,
         description: data.purpose,
         licensePlate: data.licensePlate,
+        coords: [
+          {
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+            timestamp: new Date().getTime(),
+          },
+        ],
       })
 
       Alert.alert('Success', 'Departure registered successfully')
@@ -67,6 +73,19 @@ export const useDepartureController = () => {
       navigation.goBack()
     } catch (err) {
       Alert.alert('Error', 'Failed to register departure.')
+    }
+  }
+  const handleRegisterDeparture = async (data: DepartureFormData) => {
+    if (!currentCoordinates?.latitude && !currentCoordinates?.longitude) {
+      return Alert.alert('Error', 'Location not found.')
+    }
+    const permission = await processBackgroundLocationPermission()
+
+    if (permission === 'GRANTED') {
+      processDeparture(data, {
+        latitude: currentCoordinates.latitude,
+        longitude: currentCoordinates.longitude,
+      })
     }
   }
 

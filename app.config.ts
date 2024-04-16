@@ -21,6 +21,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       /* @ts-expect-error unable to type this *** */
       googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
     },
+    infoPlist: {
+      UIBackgroundModes: ['location'],
+    },
   },
   android: {
     adaptiveIcon: {
@@ -28,6 +31,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: '#202024',
     },
     package: 'com.luiz504.ignitefleet',
+    permissions: [
+      'ACCESS_FINE_LOCATION',
+      'ACCESS_COARSE_LOCATION',
+      'ACCESS_BACKGROUND_LOCATION',
+    ],
     config: {
       googleMaps: {
         /* @ts-expect-error unable to type this *** */
@@ -45,6 +53,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       {
         locationAlwaysAndWhenInUsePermission:
           'Allow $(PRODUCT_NAME) to use your location.',
+        isAndroidForegroundServiceEnabled: true,
+        isAndroidBackgroundLocationEnabled: true,
       },
     ],
   ],

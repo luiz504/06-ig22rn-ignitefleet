@@ -10,7 +10,7 @@ type Props = ComponentPropsWithoutRef<typeof ActivityIndicator> & {
 export const Loading: FC<Props> = ({ containerStyle, ...rest }) => {
   return (
     <Container style={containerStyle}>
-      <LoadingIndicator {...rest} />
+      <LoadingIndicator size={40} {...rest} />
     </Container>
   )
 }

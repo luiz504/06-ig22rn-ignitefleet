@@ -1,6 +1,7 @@
 /* eslint-disable no-use-before-define */
 import { Realm } from '@realm/react'
 import { ObjectSchema } from 'realm'
+import { CoordsSchemaProps } from './Coords'
 
 export const HISTORIC_STATUS = {
   DEPARTURE: 'DEPARTURE',
@@ -12,22 +13,30 @@ type GenerateProps = {
   user_id: string
   license_plate: string
   description: string
+  coords: CoordsSchemaProps[]
 }
 export class Historic extends Realm.Object<Historic> {
   _id!: string
   user_id!: string
   license_plate!: string
   description!: string
+  coords!: CoordsSchemaProps[]
   status!: HistoricStatus
   created_at!: Date
   updated_at!: Date
 
-  static generate({ user_id, license_plate, description }: GenerateProps) {
+  static generate({
+    user_id,
+    license_plate,
+    description,
+    coords,
+  }: GenerateProps) {
     return {
       _id: new Realm.BSON.UUID(),
       user_id,
       license_plate,
       description,
+      coords,
       status: 'DEPARTURE',
       created_at: new Date(),
       updated_at: new Date(),
@@ -46,6 +55,10 @@ export class Historic extends Realm.Object<Historic> {
       },
       license_plate: 'string',
       description: 'string',
+      coords: {
+        type: 'list',
+        objectType: 'Coords',
+      },
       status: 'string',
       created_at: 'date',
       updated_at: 'date',

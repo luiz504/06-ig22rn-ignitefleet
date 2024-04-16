@@ -7,7 +7,7 @@ import MapView, {
   Marker,
   Polyline,
 } from 'react-native-maps'
-import { useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import { IconBox } from '~/components/IconBox'
 
@@ -60,3 +60,7 @@ export const Map: FC<Props> = ({ coordinates, ...rest }) => {
     </MapView>
   )
 }
+export const MapPlaceholder = styled.View`
+  background-color: #44403c;
+  min-height: 200px;
+`

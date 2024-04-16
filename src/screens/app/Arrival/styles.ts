@@ -7,13 +7,13 @@ export const Container = styled.View`
 export const Body = styled.View`
   flex: 1;
   padding: 0 32px;
+  padding-top: 32px;
 `
 export const Label = styled.Text`
   color: ${({ theme }) => theme.COLORS.GRAY_300};
   font-size: ${({ theme }) => theme.FONT_SIZE.SM}px;
   font-family: ${({ theme }) => theme.FONT_FAMILY.REGULAR};
 
-  margin-top: 32px;
   margin-bottom: 5px;
 `
 export const LicensePlate = styled.Text`

@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { ScrollView } from 'react-native'
 import { Controller } from 'react-hook-form'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -6,17 +6,16 @@ import { Car } from 'phosphor-react-native'
 
 import { Button } from '~/components/Button'
 import { Header } from '~/components/Header'
+import { Map, MapPlaceholder } from '~/components/Map'
+import { OpenSettingsFB } from '~/components/feedbacks/OpenSettingsFB'
 import { FormFieldColumn, TextError } from '~/components/form'
-import { Loading } from '~/components/Button/styled'
 import { LocationInfo } from './components/LocationInfo'
 import { LicensePlateInput } from './components/LicensePlateInput'
 import { PurposeCard } from './components/PurposeCard'
 
-import { Container, Body, MapPlaceholder } from './styles'
+import { Container, Body } from './styles'
 
 import { useDepartureController } from './controller'
-import { Map } from '~/components/Map'
-import { OpenSettingsFB } from '~/components/feedbacks/OpenSettingsFB'
 
 export const DepartureScreen: FC = () => {
   const {
@@ -32,7 +31,7 @@ export const DepartureScreen: FC = () => {
     showRequiredPermissionMessage,
     handleOpenAppSettings,
   } = useDepartureController()
-
+  const disabledDeparture = isSubmitting || isPending || !currentCoordinates
   return (
     <Container>
       <Header title="Departure" />
@@ -107,28 +106,12 @@ export const DepartureScreen: FC = () => {
               <Button
                 label="Register Departure"
                 onPress={handleSubmit(handleRegisterDeparture)}
-                isLoading={isSubmitting}
+                isLoading={disabledDeparture}
               />
             </Body>
           </ScrollView>
         )}
       </KeyboardAwareScrollView>
-
-      {isPending && (
-        <Loading
-          style={{
-            position: 'absolute',
-            justifyContent: 'center',
-            alignItems: 'center',
-            pointerEvents: 'none',
-            top: 0,
-            right: 0,
-            left: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(5, 12, 20, 0.5)',
-          }}
-        />
-      )}
     </Container>
   )
 }
