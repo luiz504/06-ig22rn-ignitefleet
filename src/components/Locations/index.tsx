@@ -10,7 +10,7 @@ import { View } from 'react-native'
 
 type Props = {
   departure: LocationInfoProps
-  arrival: LocationInfoProps
+  arrival?: LocationInfoProps | null
 } & ComponentProps<typeof View>
 export const Locations: FC<Props> = ({ departure, arrival, ...rest }) => {
   return (
@@ -20,12 +20,16 @@ export const Locations: FC<Props> = ({ departure, arrival, ...rest }) => {
         label={departure.label}
         description={departure.description}
       />
-      <Line />
-      <LocationInfo
-        icon={FlagCheckered}
-        label={arrival.label}
-        description={arrival.description}
-      />
+      {arrival && (
+        <>
+          <Line />
+          <LocationInfo
+            icon={FlagCheckered}
+            label={arrival.label}
+            description={arrival.description}
+          />
+        </>
+      )}
     </Container>
   )
 }

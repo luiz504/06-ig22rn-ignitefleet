@@ -27,6 +27,9 @@ import { LatLng } from 'react-native-maps'
 import { Map, MapPlaceholder } from '~/components/Map'
 import { registerArrival } from '~/useCases/register-arrival'
 import { Locations } from '~/components/Locations'
+import { getAddressLocation } from '~/useCases/get-address-location'
+import { LocationInfoProps } from '../Departure/components/LocationInfo'
+import dayjs from 'dayjs'
 
 type Props = AppScreenProps<'arrival'>
 export const Arrival: FC<Props> = ({
@@ -82,6 +85,10 @@ export const Arrival: FC<Props> = ({
 
   const [itemIsSynced, setItemIsSynced] = useState(false)
   const [coordinates, setCoordinates] = useState<LatLng[]>([])
+  const [departure, setDeparture] = useState<LocationInfoProps>(
+    {} as LocationInfoProps,
+  )
+  const [arrival, setArrival] = useState<LocationInfoProps | null>(null)
 
   const getLocationInfo = useCallback(async () => {
     if (!historic?.updated_at) return
@@ -101,7 +108,28 @@ export const Arrival: FC<Props> = ({
         })) || []
       setCoordinates(coords)
     }
-  }, [historic?.updated_at, historic?.status, historic?.coords])
+
+    if (historic?.coords[0]) {
+      const departureLocation = await getAddressLocation(historic?.coords[0])
+      setDeparture({
+        label: `Departing from ${departureLocation.street ?? ''}`,
+        description: dayjs(new Date(historic?.coords[0].timestamp)).format(
+          'DD/MM/YYYY [at] HH:mm',
+        ),
+      })
+    }
+
+    if (historic?.status === 'ARRIVAL') {
+      const lastCoord = historic.coords[historic.coords.length - 1]
+      const arrivalLocation = await getAddressLocation(lastCoord)
+      setArrival({
+        label: `Arrival at ${arrivalLocation.street ?? ''}`,
+        description: dayjs(new Date(lastCoord.timestamp)).format(
+          'DD/MM/YYYY [at] HH:mm',
+        ),
+      })
+    }
+  }, [historic])
 
   useEffect(() => {
     getLocationInfo()
@@ -117,13 +145,12 @@ export const Arrival: FC<Props> = ({
         )}
       </MapPlaceholder>
       <Body>
-        {historic?.status === 'ARRIVAL' && (
-          <Locations
-            departure={{ label: 'Departure', description: 'desc' }}
-            arrival={{ label: 'Arrival', description: 'desc' }}
-            style={{ marginBottom: 32 }}
-          />
-        )}
+        <Locations
+          departure={departure}
+          arrival={arrival}
+          style={{ marginBottom: 32 }}
+        />
+
         <Label>License plate</Label>
         <LicensePlate>{historic?.license_plate}</LicensePlate>
 
