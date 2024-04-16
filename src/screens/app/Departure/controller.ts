@@ -14,6 +14,7 @@ import {
   LocationAccuracy,
   LocationObjectCoords,
 } from 'expo-location'
+import { LatLng } from 'react-native-maps'
 
 import { getAddressLocation } from '~/useCases/get-address-location'
 import { registerDeparture } from '~/useCases/register-departure'
@@ -51,13 +52,20 @@ export const useDepartureController = () => {
   const realm = useRealm()
   const user = useUser()
 
-  const processDeparture = async (data: DepartureFormData) => {
+  const processDeparture = async (data: DepartureFormData, coords: LatLng) => {
     try {
       await startLocationTask()
       await registerDeparture(realm, {
         userId: user!.id,
         description: data.purpose,
         licensePlate: data.licensePlate,
+        coords: [
+          {
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+            timestamp: new Date().getTime(),
+          },
+        ],
       })
 
       Alert.alert('Success', 'Departure registered successfully')
@@ -74,7 +82,10 @@ export const useDepartureController = () => {
     const permission = await processBackgroundLocationPermission()
 
     if (permission === 'GRANTED') {
-      processDeparture(data)
+      processDeparture(data, {
+        latitude: currentCoordinates.latitude,
+        longitude: currentCoordinates.longitude,
+      })
     }
   }
 

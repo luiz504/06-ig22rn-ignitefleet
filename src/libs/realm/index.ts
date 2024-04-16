@@ -13,4 +13,4 @@ export const syncConfig: Partial<SyncConfiguration> = {
   existingRealmFileBehavior: realmAccessBehavior,
 }
 export const { RealmProvider, useRealm, useQuery, useObject } =
-  createRealmContext({ schema: [Historic, Coords], schemaVersion: 1 })
+  createRealmContext({ schema: [Historic, Coords], schemaVersion: 0 })

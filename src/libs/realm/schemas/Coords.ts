@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import { Realm } from '@realm/react'
 export type CoordsSchemaProps = {
   latitude: number
@@ -5,7 +6,7 @@ export type CoordsSchemaProps = {
   timestamp: number
 }
 
-export class Coords extends Realm.Object<CoordsSchemaProps> {
+export class Coords extends Realm.Object<Coords> {
   latitude!: number
   longitude!: number
   timestamp!: number
@@ -21,7 +22,6 @@ export class Coords extends Realm.Object<CoordsSchemaProps> {
   static schema: Realm.ObjectSchema = {
     name: 'Coords',
     embedded: true,
-
     properties: {
       latitude: 'float',
       longitude: 'float',
