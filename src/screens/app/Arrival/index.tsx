@@ -67,7 +67,7 @@ export const Arrival: FC<Props> = ({
         )
       }
       const locations = await getStorageLocations()
-      console.log(locations)
+
       await registerArrival(realm, historic, locations)
       await stopLocationTask()
       Alert.alert('Success', 'Vehicle arrival successfully registered.')
@@ -81,15 +81,25 @@ export const Arrival: FC<Props> = ({
 
   const [itemIsSynced, setItemIsSynced] = useState(false)
   const [coordinates, setCoordinates] = useState<LatLng[]>([])
+
   const getLocationInfo = useCallback(async () => {
     if (!historic?.updated_at) return
     const lastSync = await getLastSyncTimestamp()
     const updatedAt = historic.updated_at.getTime()
     setItemIsSynced((lastSync || 0) > (updatedAt || 0))
 
-    const storedLocations = await getStorageLocations()
-    setCoordinates(storedLocations)
-  }, [historic?.updated_at])
+    if (historic?.status === 'DEPARTURE') {
+      const storedLocations = await getStorageLocations()
+      setCoordinates(storedLocations)
+    } else {
+      const coords =
+        historic?.coords?.map(({ latitude, longitude }) => ({
+          latitude,
+          longitude,
+        })) || []
+      setCoordinates(coords)
+    }
+  }, [historic?.updated_at, historic?.status, historic?.coords])
 
   useEffect(() => {
     getLocationInfo()
